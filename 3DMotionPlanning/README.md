@@ -20,17 +20,15 @@
 ---
 ### Writeup / README
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  
-
-You're reading it! Below I describe how I addressed each rubric point and where in my code each point is handled.
-
 ### Explain the Starter Code
 
 #### 1. Explain the functionality of what's provided in `motion_planning.py` and `planning_utils.py`
-These scripts contain a basic planning implementation that includes...
+The code follows suit mimicing the state machine inmplemented in the previous backyard starter code, adding to it the planner instead of a fixed set of programmed waypoints. The planner includes starter code to discretize the environment, define the start and goal locations, perform a search using A*, and remove unnecessary waypoints.
 
-And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
-![Top Down View](./misc/high_up.png)
+And here's a demo of the default starter code results:
+
+https://user-images.githubusercontent.com/23568809/213683946-0e3f04c4-1da9-4d5c-a68f-5831b3bc1c24.mp4
+
 
 Here's | A | Snappy | Table
 --- | --- | --- | ---
