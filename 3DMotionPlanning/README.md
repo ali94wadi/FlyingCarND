@@ -43,7 +43,11 @@ These scripts contain a basic planning implementation that includes a state mach
 
 ### Execute the flight
 
-![Performance](./Vids/P2.mp4)
+
+
+https://user-images.githubusercontent.com/23568809/213751032-d6f97fcb-d379-45bf-b868-53e1d3ecde5c.mp4
+
+
   
 # TODO Extra Challenges: Real World Planning
 
