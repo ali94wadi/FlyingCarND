@@ -43,9 +43,14 @@ These scripts contain a basic planning implementation that includes a state mach
 
 ### Execute the flight
 
-
-
+Attempt 1
+======
 https://user-images.githubusercontent.com/23568809/213751032-d6f97fcb-d379-45bf-b868-53e1d3ecde5c.mp4
+
+
+Attempt 2
+======
+https://user-images.githubusercontent.com/23568809/213849171-83b8fbd0-773f-4d97-9553-a3c28c6e9532.mp4
 
 
   
