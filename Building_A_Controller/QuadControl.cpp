@@ -76,16 +76,16 @@ cmd.desiredThrustsN[3] = mass * 9.81f / 4.f; // rear right
 
 ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 float T, tau_x, tau_y, tau_z, l;
-l = L / 1.414;
+l = L / sqrt(2.f);
 T = collThrustCmd;
 tau_x = momentCmd.x/l;
 tau_y = momentCmd.y/l;
-tau_z = -momentCmd.z/kappa; // -1 or 1???
+tau_z = momentCmd.z/kappa; // -1 or 1???
 
-cmd.desiredThrustsN[0] = (T+tau_x+tau_y+tau_z) / 4.f; // front left
-cmd.desiredThrustsN[1] = (T-tau_x+tau_y-tau_z) / 4.f; // front right
-cmd.desiredThrustsN[2] = (T+tau_x-tau_y-tau_z) / 4.f; // rear left
-cmd.desiredThrustsN[3] = (T-tau_x-tau_y+tau_z) / 4.f; // rear right
+cmd.desiredThrustsN[0] = (T+tau_x+tau_y-tau_z) / 4.f; // front left
+cmd.desiredThrustsN[1] = (T-tau_x+tau_y+tau_z) / 4.f; // front right
+cmd.desiredThrustsN[2] = (T+tau_x-tau_y+tau_z) / 4.f; // rear left
+cmd.desiredThrustsN[3] = (T-tau_x-tau_y-tau_z) / 4.f; // rear right
 
 /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -109,12 +109,12 @@ V3F QuadControl::BodyRateControl(V3F pqrCmd, V3F pqr)
 V3F momentCmd;
 
 ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-V3F Inertia;// Ixx, Iyy, Izz;
-Inertia.x = Ixx;
-Inertia.y = Iyy;
-Inertia.z = Izz;
+//V3F Inertia;// Ixx, Iyy, Izz;
+//Inertia.x = Ixx;
+//Inertia.y = Iyy;
+//Inertia.z = Izz;
 
-momentCmd = Inertia * kpPQR * (pqrCmd - pqr);
+momentCmd = V3F(Ixx,Iyy,Izz) * kpPQR * (pqrCmd - pqr);
 
 /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -145,21 +145,20 @@ Mat3x3F R = attitude.RotationMatrix_IwrtB();
 
 ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 pqrCmd.z = 0;
-    if (collThrustCmd > 0) {
-          float c = -collThrustCmd / mass;
-          float b_x, b_y;
-          float b_x_d, b_y_d;
-          b_x = CONSTRAIN((accelCmd.x / c), -sin(maxTiltAngle), sin(maxTiltAngle));
-          b_y = CONSTRAIN((accelCmd.y / c), -sin(maxTiltAngle), sin(maxTiltAngle));
-          b_x_d = kpBank * (b_x - R(0, 2));
-          b_y_d = kpBank * (b_y - R(1, 2));
-          pqrCmd.x = (R(1, 0) * b_x_d - R(0, 0) * b_y_d) / R(2, 2);
-          pqrCmd.y = (R(1, 1) * b_x_d - R(0, 1) * b_y_d) / R(2, 2);
-      }
-      else {
-          pqrCmd.x = 0.0;
-          pqrCmd.y = 0.0;
-      }
+pqrCmd.x = 0.0;
+pqrCmd.y = 0.0;
+if (collThrustCmd > 0) {
+      float c = -collThrustCmd / mass;
+      float b_x, b_y;
+      float b_x_d, b_y_d;
+      b_x = CONSTRAIN((accelCmd.x / c), -sin(maxTiltAngle), sin(maxTiltAngle));
+      b_y = CONSTRAIN((accelCmd.y / c), -sin(maxTiltAngle), sin(maxTiltAngle));
+      b_x_d = kpBank * (b_x - R(0, 2));
+      b_y_d = kpBank * (b_y - R(1, 2));
+      pqrCmd.x = (R(1, 0) * b_x_d - R(0, 0) * b_y_d) / R(2, 2);
+      pqrCmd.y = (R(1, 1) * b_x_d - R(0, 1) * b_y_d) / R(2, 2);
+  }
+
 /////////////////////////////// END STUDENT CODE ////////////////////////////
 
 return pqrCmd;
@@ -200,10 +199,18 @@ u_1_bar = p_term + d_term + z_dot_dot_target
 c = (u_1_bar - self.g)/b_z
 */
 ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-integratedAltitudeError += dt * (posZCmd - posZ);
-thrust = kpPosZ*(posZCmd - posZ) + kpVelZ*(velZCmd - velZ) + accelZCmd + KiPosZ*integratedAltitudeError;
-thrust = -mass*(thrust - CONST_GRAVITY)/R(2,2);
-//thrust = CONSTRAIN(thrust,-maxDescentRate*dt,maxAscentRate*dt);
+float zErr = posZCmd - posZ;
+integratedAltitudeError += zErr * dt;
+    
+float velZRef = velZCmd + (kpPosZ * zErr) + (KiPosZ * integratedAltitudeError);
+velZRef = -CONSTRAIN(-velZRef, -maxDescentRate, maxAscentRate);
+
+float accelCmd = accelZCmd + (kpVelZ*(velZRef - velZ));
+
+thrust = mass * (CONST_GRAVITY - (accelCmd / R(2,2)));
+
+//    thrust = kpPosZ*(posZCmd - posZ) + kpVelZ*(velZCmd - velZ) + accelZCmd + KiPosZ*integratedAltitudeError;
+//    thrust = -mass*(thrust - CONST_GRAVITY)/R(2,2);
 /////////////////////////////// END STUDENT CODE ////////////////////////////
 
 return thrust;
