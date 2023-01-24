@@ -203,9 +203,10 @@ float zErr = posZCmd - posZ;
 integratedAltitudeError += zErr * dt;
     
 float velZRef = velZCmd + (kpPosZ * zErr) + (KiPosZ * integratedAltitudeError);
-velZRef = -CONSTRAIN(-velZRef, -maxDescentRate, maxAscentRate);
+velZRef = -CONSTRAIN(-velZRef, -maxAscentRate, maxDescentRate);
 
-float accelCmd = accelZCmd + (kpVelZ*(velZRef - velZ));
+float accelCmd = accelZCmd + (kpVelZ*(velZRef - velZ)) ;
+   
 
 thrust = mass * (CONST_GRAVITY - (accelCmd / R(2,2)));
 
