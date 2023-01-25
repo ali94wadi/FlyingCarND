@@ -7,6 +7,7 @@ Here various screenshots depicting the passing of the different elements of the 
 
 1. Sensor Noise
 
+The time series of measuremnts were analyzed in the MATLAB environment to compute the propoer std values and use them in the simulator. The scenario configuration file is availble in the repository for reference. 
 <img width="1440" alt="S1" src="https://user-images.githubusercontent.com/23568809/214616675-fb77b1a6-faca-44ff-988e-59a0e1339d42.png">
 
 2. Attitude Estimation
